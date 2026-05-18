@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SpaApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+237e750fde7739e8f6fc7e16aac2d355d295b263")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+614727f95811fabb6ec6e1a4e33fe0b9ed22a172")]
 [assembly: System.Reflection.AssemblyProductAttribute("SpaApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SpaApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
