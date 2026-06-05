@@ -23,5 +23,5 @@ Khi chạy lần đầu, hệ thống tự tạo:
 - Email: `admin@spa.local`
 - Mật khẩu: `Admin@12345`
 
-Bạn **nên đổi** khóa JWT trong `SpaApi/appsettings.json` (`Jwt:Key`) trước khi triển khai thật.
+**nên đổi** khóa JWT trong `SpaApi/appsettings.json` (`Jwt:Key`) trước khi triển khai thật.
 
