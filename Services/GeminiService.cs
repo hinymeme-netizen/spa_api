@@ -195,7 +195,7 @@ public class GeminiService
         if (tools is { Count: > 0 })
             request["tools"] = new[] { new { functionDeclarations = tools } };
 
-        var res = await _http.PostAsync(url, JsonContent(request));
+        var res = await PostWithRetryAsync(url, JsonContent(request));
         if (!res.IsSuccessStatusCode)
         {
             var err = await res.Content.ReadAsStringAsync();
@@ -263,7 +263,7 @@ public class GeminiService
         if (tools is { Count: > 0 })
             request["tools"] = new[] { new { functionDeclarations = tools } };
 
-        var res = await _http.PostAsync(url, JsonContent(request));
+        var res = await PostWithRetryAsync(url, JsonContent(request));
         if (!res.IsSuccessStatusCode)
         {
             var err = await res.Content.ReadAsStringAsync();
@@ -276,6 +276,31 @@ public class GeminiService
     }
 
     // ---- Private helpers ----
+
+    private async Task<HttpResponseMessage> PostWithRetryAsync(string url, HttpContent content, int maxRetries = 3)
+    {
+        var delays = new[] { 2000, 4000, 8000 };
+        HttpResponseMessage? res = null;
+        for (int attempt = 0; attempt <= maxRetries; attempt++)
+        {
+            res = await _http.PostAsync(url, content);
+            if (res.IsSuccessStatusCode) return res;
+
+            var status = (int)res.StatusCode;
+            if ((status == 503 || status == 429) && attempt < maxRetries)
+            {
+                var wait = delays[Math.Min(attempt, delays.Length - 1)];
+                _log.LogWarning("Gemini {Status} — retry {Attempt}/{Max} after {Wait}ms", status, attempt + 1, maxRetries, wait);
+                await Task.Delay(wait);
+                // Recreate content since HttpContent can only be sent once
+                var bodyStr = await content.ReadAsStringAsync();
+                content = new StringContent(bodyStr, Encoding.UTF8, "application/json");
+                continue;
+            }
+            break;
+        }
+        return res!;
+    }
 
     private (string Text, List<(string Name, JsonElement Args)> ToolCalls) ParseGeminiResponse(string jsonStr)
     {
